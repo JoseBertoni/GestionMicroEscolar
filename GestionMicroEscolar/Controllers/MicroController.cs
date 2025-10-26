@@ -26,10 +26,10 @@ namespace GestionMicroEscolar.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(MicroDto dto)
+        public async Task<IActionResult> Crear(string patente)
         {
-            await _service.CrearAsync(dto);
-            return Created($"api/micros/{dto.Patente}", dto);
+            await _service.CrearAsync(patente);
+            return Created($"api/micros/{patente}", new { patente });
         }
 
         [HttpDelete("{patente}")]

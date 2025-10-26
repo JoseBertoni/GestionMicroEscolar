@@ -21,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IMicroRepository, MicroRepository>();
 builder.Services.AddScoped<IChoferRepository, ChoferRepository>();
 builder.Services.AddScoped<IChicoRepository, ChicoRepository>();
+builder.Configuration.AddJsonFile("appsettings.Docker.json", optional: true);
 
 // Servicios
 builder.Services.AddScoped<MicroService>();
@@ -30,13 +31,13 @@ builder.Services.AddScoped<ChicoService>();
 var app = builder.Build();
 
 // Pipeline
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
