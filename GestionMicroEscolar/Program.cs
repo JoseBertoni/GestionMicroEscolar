@@ -1,28 +1,35 @@
 using Data;
 using GestionMicroEscolar.Repository;
 using GestionMicroEscolar.Repository.Interface;
+using GestionMicroEscolar.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Conexion a la base de datos
+// DB
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-var app = builder.Build();
 
-//Repositorios
+// Repositorios
 builder.Services.AddScoped<IMicroRepository, MicroRepository>();
 builder.Services.AddScoped<IChoferRepository, ChoferRepository>();
 builder.Services.AddScoped<IChicoRepository, ChicoRepository>();
 
-// Configure the HTTP request pipeline.
+// Servicios
+builder.Services.AddScoped<MicroService>();
+builder.Services.AddScoped<ChoferService>();
+builder.Services.AddScoped<ChicoService>();
+
+var app = builder.Build();
+
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,9 +37,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

@@ -31,23 +31,12 @@ namespace GestionMicroEscolar.Service
             return micro is null ? null : Map(micro);
         }
 
-        public async Task CrearAsync(MicroDto dto)
+        public async Task CrearAsync(string patente)
         {
-            if (await _micros.GetByPatenteAsync(dto.Patente) is not null)
+            if (await _micros.GetByPatenteAsync(patente) is not null)
                 throw new Exception("Ya existe un micro con esa patente.");
 
-            var micro = new Micro { Patente = dto.Patente, ChoferDni = dto.Chofer?.Dni };
-
-            // Validación de chofer asignado
-            if (dto.Chofer is not null)
-            {
-                var chofer = await _choferes.GetByDniAsync(dto.Chofer.Dni)
-                    ?? throw new Exception("El chofer no existe.");
-
-                if ((await _micros.GetAllAsync()).Any(m => m.Chofer?.Dni == chofer.Dni))
-                    throw new Exception("Ese chofer ya está asignado a otro micro.");
-            }
-
+            var micro = new Micro { Patente = patente };
             await _micros.AddAsync(micro);
         }
 
