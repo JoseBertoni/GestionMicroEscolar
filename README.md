@@ -16,7 +16,7 @@ Sistema integral de gestión para transporte escolar que permite administrar chi
 - [Características de Seguridad](#-características-de-seguridad)
 - [Desarrollo](#-desarrollo)
 - [Solución de Problemas](#-solución-de-problemas)
-- [Contribución](#-contribución)
+
 
 ## 🎯 Descripción del Sistema
 
