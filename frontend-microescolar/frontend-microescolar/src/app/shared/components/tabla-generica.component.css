@@ -85,6 +85,32 @@ table.mat-mdc-table .mdc-data-table__row:hover {
   display: inline-block;
 }
 
+.cantidad-chicos-tooltip {
+  cursor: pointer;
+  color: #1976d2;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #e3f2fd;
+  transition: all 0.2s ease;
+}
+
+.cantidad-chicos-tooltip:hover {
+  background-color: #bbdefb;
+  transform: scale(1.05);
+}
+
+::ng-deep .tooltip-chicos {
+  background-color: #37474f !important;
+  color: white !important;
+  font-size: 12px !important;
+  max-width: 300px !important;
+  white-space: pre-line !important;
+  line-height: 1.4 !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+}
+
 @media (max-width: 768px) {
   .lista-chicos {
     flex-direction: column;

@@ -16,8 +16,9 @@ export class MicrosService {
     );
   }
 
-  crearMicro(micro: MicroRequest): Observable<Micro> {
-    return this.http.post<Micro>(this.baseUrl, micro).pipe(
+  crearMicro(micro: MicroRequest): Observable<any> {
+    const url = `${this.baseUrl}?patente=${encodeURIComponent(micro.patente)}`;
+    return this.http.post<any>(url, {}).pipe(
       catchError(this.handleError)
     );
   }
@@ -29,7 +30,42 @@ export class MicrosService {
     );
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  desasignarChofer(patente: string): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(patente)}/desasignar-chofer`;
+    return this.http.delete(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  desasignarChico(dniChico: string): Observable<any> {
+    const url = `${this.baseUrl}/chico/${encodeURIComponent(dniChico)}/desasignar`;
+    return this.http.delete(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  desasignarTodosLosChicos(patente: string): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(patente)}/desasignar-todos-chicos`;
+    return this.http.delete(url).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  asignarChofer(patente: string, dniChofer: string): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(patente)}/asignar-chofer/${encodeURIComponent(dniChofer)}`;
+    return this.http.post(url, {}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  asignarChico(patente: string, dniChico: string): Observable<any> {
+    const url = `${this.baseUrl}/${encodeURIComponent(patente)}/agregar-chico/${encodeURIComponent(dniChico)}`;
+    return this.http.post(url, {}).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: any): Observable<never> {
     return throwError(() => new Error(error.message || 'Error del servidor'));
   }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { FormularioGenericoComponent, ConfigFormulario } from './formulario-generico.component';
 import { DialogoConfirmacionComponent } from './dialogo-confirmacion.component';
@@ -26,7 +27,8 @@ export interface AccionBoton {
     CommonModule,
     MatCardModule,
     MatTableModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
   ],
   templateUrl: './tabla-generica.component.html',
   styleUrls: ['./tabla-generica.component.css']
@@ -42,6 +44,7 @@ export class TablaGenericaComponent {
   @Output() crearElemento = new EventEmitter<void>();
   @Output() eliminarElemento = new EventEmitter<any>();
   @Output() modificarElemento = new EventEmitter<{original: any, modificado: any}>();
+  @Output() accionPersonalizada = new EventEmitter<{accion: string, fila: any}>();
 
   constructor(private dialog: MatDialog) {}
 
@@ -61,8 +64,8 @@ export class TablaGenericaComponent {
     } else if (accion === 'eliminar') {
       this.confirmarEliminacion(fila);
     } else {
-      // Aquí se puede emitir eventos o manejar otras acciones
-      console.log(`Acción: ${accion}`, fila);
+      // Emitir evento para acciones personalizadas
+      this.accionPersonalizada.emit({ accion, fila });
     }
   }
 
@@ -135,6 +138,17 @@ export class TablaGenericaComponent {
 
   esArray(valor: any): boolean {
     return Array.isArray(valor);
+  }
+
+  obtenerTooltipChicos(fila: any): string {
+    if (fila.chicos && Array.isArray(fila.chicos) && fila.chicos.length > 0) {
+      return fila.chicos.map((chico: any) => `• ${chico.nombre} (DNI: ${chico.dni})`).join('\n');
+    }
+    return 'No hay chicos asignados';
+  }
+
+  tieneChicos(fila: any): boolean {
+    return fila.chicos && Array.isArray(fila.chicos) && fila.chicos.length > 0;
   }
 
   onCrearPersonalizado(): void {

@@ -6,7 +6,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TablaGenericaComponent, ColumnaTabla, AccionBoton } from '../../shared/components/tabla-generica.component';
 import { ConfigFormulario, FormularioGenericoComponent } from '../../shared/components/formulario-generico.component';
 import { ChicosService } from '../../services/chicos.service';
+import { MicrosService } from '../../services/micros.service';
 import { Chico, ChicoRequest } from '../../models/chico.model';
+import { Micro } from '../../models/micro.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-chicos',
@@ -28,7 +31,7 @@ export class ChicosComponent implements OnInit {
   columnas: ColumnaTabla[] = [
     { key: 'nombre', label: 'Nombre' },
     { key: 'dni', label: 'DNI' },
-    { key: 'micro', label: 'Micro' }
+    { key: 'microAsignado', label: 'Micro Asignado' }
   ];
 
   acciones: AccionBoton[] = [
@@ -53,13 +56,6 @@ export class ChicosComponent implements OnInit {
         type: 'text',
         required: true,
         placeholder: 'Ingrese el DNI'
-      },
-      {
-        key: 'micro',
-        label: 'Micro',
-        type: 'text',
-        required: false,
-        placeholder: 'Ingrese el número de micro (opcional)'
       }
     ]
   };
@@ -67,6 +63,7 @@ export class ChicosComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private chicosService: ChicosService,
+    private microsService: MicrosService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -76,13 +73,32 @@ export class ChicosComponent implements OnInit {
 
   cargarChicos(): void {
     this.cargando = true;
-    this.chicosService.obtenerChicos().subscribe({
-      next: (chicos) => {
-        this.datos = chicos;
+    
+    // Hacer ambas llamadas en paralelo
+    forkJoin({
+      chicos: this.chicosService.obtenerChicos(),
+      micros: this.microsService.obtenerMicros()
+    }).subscribe({
+      next: ({ chicos, micros }) => {
+        // Crear un mapa de DNI chico -> patente micro
+        const chicoMicroMap = new Map<string, string>();
+        micros.forEach(micro => {
+          if (micro.chicos && micro.chicos.length > 0) {
+            micro.chicos.forEach(chico => {
+              chicoMicroMap.set(chico.dni, micro.patente);
+            });
+          }
+        });
+
+        // Mapear los datos para mostrar correctamente en la tabla
+        this.datos = chicos.map(chico => ({
+          ...chico,
+          microAsignado: chicoMicroMap.get(chico.dni) || 'Sin asignar'
+        }));
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al cargar los chicos: ' + error.message);
+        this.mostrarError('Error al cargar los datos: ' + error.message);
         this.cargando = false;
       }
     });

@@ -15,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -31,7 +32,8 @@ export const appConfig: ApplicationConfig = {
       MatSnackBarModule,
       MatProgressSpinnerModule,
       MatFormFieldModule,
-      MatInputModule
+      MatInputModule,
+      MatTooltipModule
     ),
   ]
 };

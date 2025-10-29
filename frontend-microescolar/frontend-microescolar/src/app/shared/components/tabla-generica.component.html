@@ -16,7 +16,19 @@
       <ng-container *ngFor="let columna of columnas" [matColumnDef]="columna.key">
         <th mat-header-cell *matHeaderCellDef> {{ columna.label }} </th>
         <td mat-cell *matCellDef="let row">
-          <span *ngIf="!esArray(row[columna.key])">{{ row[columna.key] }}</span>
+          <!-- Tooltip especial para la columna de cantidad de chicos -->
+          <span *ngIf="columna.key === 'cantidadChicos' && tieneChicos(row)" 
+                class="cantidad-chicos-tooltip"
+                [matTooltip]="obtenerTooltipChicos(row)"
+                matTooltipPosition="above"
+                matTooltipClass="tooltip-chicos">
+            {{ row[columna.key] }}
+          </span>
+          <!-- Para otros casos -->
+          <span *ngIf="columna.key !== 'cantidadChicos' && !esArray(row[columna.key])">{{ row[columna.key] }}</span>
+          <!-- Para cantidad de chicos sin tooltip (cuando no hay chicos) -->
+          <span *ngIf="columna.key === 'cantidadChicos' && !tieneChicos(row)">{{ row[columna.key] }}</span>
+          <!-- Para arrays -->
           <div *ngIf="esArray(row[columna.key])" class="lista-chicos">
             <span *ngFor="let item of row[columna.key]; let ultimo = last" class="chip-chico">
               {{ item }}<span *ngIf="!ultimo">, </span>

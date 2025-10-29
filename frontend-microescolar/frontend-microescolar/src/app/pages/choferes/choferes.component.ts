@@ -6,7 +6,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TablaGenericaComponent, ColumnaTabla, AccionBoton } from '../../shared/components/tabla-generica.component';
 import { ConfigFormulario, FormularioGenericoComponent } from '../../shared/components/formulario-generico.component';
 import { ChoferesService } from '../../services/choferes.service';
+import { MicrosService } from '../../services/micros.service';
 import { Chofer, ChoferRequest } from '../../models/chofer.model';
+import { Micro } from '../../models/micro.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-choferes',
@@ -28,7 +31,7 @@ export class ChoferesComponent implements OnInit {
   columnas: ColumnaTabla[] = [
     { key: 'nombreCompleto', label: 'Nombre y Apellido' },
     { key: 'dni', label: 'DNI' },
-    { key: 'micro', label: 'Micro Asignado' }
+    { key: 'microAsignado', label: 'Micro Asignado' }
   ];
 
   
@@ -44,17 +47,10 @@ export class ChoferesComponent implements OnInit {
     campos: [
       {
         key: 'nombre',
-        label: 'Nombre',
+        label: 'Nombre y Apellido',
         type: 'text',
         required: true,
-        placeholder: 'Ingrese el nombre'
-      },
-      {
-        key: 'apellido',
-        label: 'Apellido',
-        type: 'text',
-        required: true,
-        placeholder: 'Ingrese el apellido'
+        placeholder: 'Ingrese el nombre y apellido completo'
       },
       {
         key: 'dni',
@@ -69,6 +65,7 @@ export class ChoferesComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private choferesService: ChoferesService,
+    private microsService: MicrosService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -78,13 +75,31 @@ export class ChoferesComponent implements OnInit {
 
   cargarChoferes(): void {
     this.cargando = true;
-    this.choferesService.obtenerChoferes().subscribe({
-      next: (choferes) => {
-        this.datos = choferes;
+    
+    // Hacer ambas llamadas en paralelo
+    forkJoin({
+      choferes: this.choferesService.obtenerChoferes(),
+      micros: this.microsService.obtenerMicros()
+    }).subscribe({
+      next: ({ choferes, micros }) => {
+        // Crear un mapa de DNI chofer -> patente micro
+        const choferMicroMap = new Map<string, string>();
+        micros.forEach(micro => {
+          if (micro.chofer && micro.chofer.dni) {
+            choferMicroMap.set(micro.chofer.dni, micro.patente);
+          }
+        });
+
+        // Mapear los datos para mostrar correctamente en la tabla
+        this.datos = choferes.map(chofer => ({
+          ...chofer,
+          nombreCompleto: chofer.nombre || 'Sin nombre',
+          microAsignado: choferMicroMap.get(chofer.dni) || 'Sin asignar'
+        }));
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al cargar los choferes: ' + error.message);
+        this.mostrarError('Error al cargar los datos: ' + error.message);
         this.cargando = false;
       }
     });
@@ -108,11 +123,7 @@ export class ChoferesComponent implements OnInit {
     this.cargando = true;
     this.choferesService.crearChofer(datos).subscribe({
       next: (nuevo) => {
-        // Componer nombreCompleto desde nombre + apellido si el backend devuelve sólo eso
-        if (!(nuevo as any).nombreCompleto && (datos as any).nombre && (datos as any).apellido) {
-          (nuevo as any).nombreCompleto = `${(datos as any).nombre} ${(datos as any).apellido}`;
-        }
-        this.datos = [...this.datos, nuevo];
+        this.cargarChoferes(); // Recargar datos para actualizar la tabla
         this.mostrarExito('Chofer creado exitosamente');
         this.cargando = false;
       },

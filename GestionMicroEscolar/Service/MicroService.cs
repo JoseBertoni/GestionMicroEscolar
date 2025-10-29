@@ -45,8 +45,19 @@ namespace GestionMicroEscolar.Service
             var micro = await _micros.GetByPatenteAsync(patente)
                 ?? throw new Exception("El micro no existe.");
 
-            if (micro.Chicos.Count > 0)
-                throw new Exception("No se puede eliminar un micro con chicos asignados.");
+            // Desasignar automáticamente todos los chicos del micro
+            foreach (var chico in micro.Chicos)
+            {
+                chico.MicroPatente = null;
+                await _chicos.UpdateAsync(chico);
+            }
+
+            // Desasignar automáticamente el chofer del micro
+            if (micro.Chofer is not null)
+            {
+                micro.Chofer.MicroPatente = null;
+                await _choferes.UpdateAsync(micro.Chofer);
+            }
 
             await _micros.DeleteAsync(micro);
         }
@@ -62,8 +73,8 @@ namespace GestionMicroEscolar.Service
             if ((await _micros.GetAllAsync()).Any(m => m.Chofer?.Dni == dniChofer && m.Patente != patente))
                 throw new Exception("Este chofer ya está asignado a otro micro.");
 
-            micro.ChoferDni = dniChofer;
-            await _micros.UpdateAsync(micro);
+            chofer.MicroPatente = patente;
+            await _choferes.UpdateAsync(chofer);
         }
 
         public async Task AgregarChicoAsync(string patente, string dniChico)
@@ -79,6 +90,45 @@ namespace GestionMicroEscolar.Service
 
             chico.MicroPatente = patente;
             await _chicos.UpdateAsync(chico);
+        }
+
+        public async Task DesasignarChoferAsync(string patente)
+        {
+            var micro = await _micros.GetByPatenteAsync(patente)
+                ?? throw new Exception("El micro no existe.");
+
+            if (micro.Chofer is null)
+                throw new Exception("Este micro no tiene chofer asignado.");
+
+            micro.Chofer.MicroPatente = null;
+            await _choferes.UpdateAsync(micro.Chofer);
+        }
+
+        public async Task DesasignarChicoAsync(string dniChico)
+        {
+            var chico = await _chicos.GetByDniAsync(dniChico)
+                ?? throw new Exception("El chico no existe.");
+
+            if (chico.MicroPatente is null)
+                throw new Exception("Este chico no está asignado a ningún micro.");
+
+            chico.MicroPatente = null;
+            await _chicos.UpdateAsync(chico);
+        }
+
+        public async Task DesasignarTodosLosChicosAsync(string patente)
+        {
+            var micro = await _micros.GetByPatenteAsync(patente)
+                ?? throw new Exception("El micro no existe.");
+
+            if (micro.Chicos.Count == 0)
+                throw new Exception("Este micro no tiene chicos asignados.");
+
+            foreach (var chico in micro.Chicos)
+            {
+                chico.MicroPatente = null;
+                await _chicos.UpdateAsync(chico);
+            }
         }
 
         private MicroDto Map(Micro m) =>

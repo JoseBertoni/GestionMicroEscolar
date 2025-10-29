@@ -2,6 +2,7 @@ export interface Chico {
   dni: string;
   nombre: string;
   micro?: string; // Opcional porque puede no estar asignado inicialmente
+  microAsignado?: string; // Campo calculado para mostrar en la tabla
 }
 
 export interface ChicoRequest {

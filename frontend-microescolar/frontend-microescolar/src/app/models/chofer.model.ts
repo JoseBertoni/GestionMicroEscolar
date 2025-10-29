@@ -1,11 +1,12 @@
 export interface Chofer {
-  nombreCompleto: string;
+  nombre: string;
   dni: string;
-  micro?: string | null;
+  microPatente?: string | null;
+  nombreCompleto?: string; // Campo calculado para la tabla
+  microAsignado?: string; // Campo calculado para mostrar en la tabla
 }
 
 export interface ChoferRequest {
   nombre: string;
-  apellido: string;
   dni: string;
 }

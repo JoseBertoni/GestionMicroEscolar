@@ -17,13 +17,23 @@ namespace GestionMicroEscolar.Service
         public async Task<List<ChoferDto>> ListarAsync()
         {
             var list = await _repo.GetAllAsync();
-            return list.Select(c => new ChoferDto { Dni = c.Dni, Nombre = c.Nombre }).ToList();
+            return list.Select(c => new ChoferDto 
+            { 
+                Dni = c.Dni, 
+                Nombre = c.Nombre, 
+                MicroPatente = c.MicroPatente 
+            }).ToList();
         }
 
         public async Task<ChoferDto?> ObtenerAsync(string dni)
         {
             var c = await _repo.GetByDniAsync(dni);
-            return c is null ? null : new ChoferDto { Dni = c.Dni, Nombre = c.Nombre };
+            return c is null ? null : new ChoferDto 
+            { 
+                Dni = c.Dni, 
+                Nombre = c.Nombre, 
+                MicroPatente = c.MicroPatente 
+            };
         }
 
         public async Task CrearAsync(ChoferDto dto)

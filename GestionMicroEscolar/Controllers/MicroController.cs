@@ -52,5 +52,26 @@ namespace GestionMicroEscolar.Controllers
             await _service.AgregarChicoAsync(patente, dniChico);
             return Ok();
         }
+
+        [HttpDelete("{patente}/desasignar-chofer")]
+        public async Task<IActionResult> DesasignarChofer(string patente)
+        {
+            await _service.DesasignarChoferAsync(patente);
+            return Ok();
+        }
+
+        [HttpDelete("chico/{dniChico}/desasignar")]
+        public async Task<IActionResult> DesasignarChico(string dniChico)
+        {
+            await _service.DesasignarChicoAsync(dniChico);
+            return Ok();
+        }
+
+        [HttpDelete("{patente}/desasignar-todos-chicos")]
+        public async Task<IActionResult> DesasignarTodosLosChicos(string patente)
+        {
+            await _service.DesasignarTodosLosChicosAsync(patente);
+            return Ok();
+        }
     }
 }

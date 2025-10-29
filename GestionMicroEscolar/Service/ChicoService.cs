@@ -38,7 +38,7 @@ namespace GestionMicroEscolar.Service
             var c = await _repo.GetByDniAsync(dni)
                 ?? throw new Exception("El alumno no existe.");
 
-            if (c.MicroPatente is not null)
+            if (c.Micro?.Patente is not null)
                 throw new Exception("No se puede eliminar un alumno asignado a un micro.");
 
             await _repo.DeleteAsync(c);
