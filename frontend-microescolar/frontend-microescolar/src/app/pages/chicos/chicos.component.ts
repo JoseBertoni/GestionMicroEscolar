@@ -35,8 +35,20 @@ export class ChicosComponent implements OnInit {
   ];
 
   acciones: AccionBoton[] = [
-    { label: 'Modificar', color: 'accent', action: 'modificar' },
-    { label: 'Eliminar', color: 'warn', action: 'eliminar' }
+    { 
+      label: 'Modificar', 
+      color: 'accent', 
+      action: 'modificar',
+      icon: 'edit',
+      tooltip: 'Modificar información del chico'
+    },
+    { 
+      label: 'Eliminar', 
+      color: 'warn', 
+      action: 'eliminar',
+      icon: 'delete',
+      tooltip: 'Eliminar chico del sistema'
+    }
   ];
 
   configFormulario: ConfigFormulario = {
@@ -122,7 +134,12 @@ export class ChicosComponent implements OnInit {
     this.cargando = true;
     this.chicosService.crearChico(datosChico).subscribe({
       next: (nuevoChico) => {
-        this.datos = [...this.datos, nuevoChico];
+        // Agregar el campo microAsignado para mantener consistencia con la tabla
+        const chicoConMicroAsignado = {
+          ...nuevoChico,
+          microAsignado: 'Sin asignar'
+        };
+        this.datos = [...this.datos, chicoConMicroAsignado];
         this.mostrarExito('Chico creado exitosamente');
         this.cargando = false;
       },
@@ -142,7 +159,11 @@ export class ChicosComponent implements OnInit {
       next: (chicoModificado) => {
         const index = this.datos.findIndex(c => c.dni === dniOriginal);
         if (index !== -1) {
-          this.datos[index] = chicoModificado;
+          // Preservar el campo microAsignado que se calcula dinámicamente
+          this.datos[index] = {
+            ...chicoModificado,
+            microAsignado: this.datos[index].microAsignado
+          };
           this.datos = [...this.datos];
         }
         this.mostrarExito('Chico modificado exitosamente');
@@ -171,16 +192,38 @@ export class ChicosComponent implements OnInit {
   }
 
   private mostrarExito(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', {
-      duration: 3000,
-      panelClass: ['success-snackbar']
+    this.snackBar.open(`✅ ${mensaje}`, 'Cerrar', {
+      duration: 4000,
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 
   private mostrarError(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', {
+    this.snackBar.open(`❌ ${mensaje}`, 'Cerrar', {
+      duration: 6000,
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarAdvertencia(mensaje: string): void {
+    this.snackBar.open(`⚠️ ${mensaje}`, 'Cerrar', {
       duration: 5000,
-      panelClass: ['error-snackbar']
+      panelClass: ['warning-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    this.snackBar.open(`ℹ️ ${mensaje}`, 'Cerrar', {
+      duration: 4000,
+      panelClass: ['info-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 }

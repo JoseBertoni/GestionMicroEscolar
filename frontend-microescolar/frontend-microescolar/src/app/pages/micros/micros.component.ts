@@ -6,6 +6,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TablaGenericaComponent, ColumnaTabla, AccionBoton } from '../../shared/components/tabla-generica.component';
 import { ConfigFormulario, FormularioGenericoComponent } from '../../shared/components/formulario-generico.component';
 import { MicrosService } from '../../services/micros.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
 import { Micro, MicroRequest } from '../../models/micro.model';
 
 @Component({
@@ -34,13 +35,48 @@ export class MicrosComponent implements OnInit {
   
 
   acciones: AccionBoton[] = [
-    { label: 'Modificar', color: 'accent', action: 'modificar' },
-    { label: 'Asignar Chofer', color: 'primary', action: 'asignar-chofer' },
-    { label: 'Asignar Chico', color: 'primary', action: 'asignar-chico' },
-    { label: 'Desasignar Chofer', color: 'accent', action: 'desasignar-chofer' },
-    { label: 'Desasignar Chico', color: 'accent', action: 'desasignar-chico' },
-    { label: 'Desasignar Chicos', color: 'accent', action: 'desasignar-chicos' },
-    { label: 'Eliminar', color: 'warn', action: 'eliminar' }
+    { 
+      label: 'Asignar Chofer', 
+      color: 'primary', 
+      action: 'asignar-chofer',
+      icon: 'person_add',
+      tooltip: 'Asignar chofer al micro'
+    },
+    { 
+      label: 'Asignar Chico', 
+      color: 'primary', 
+      action: 'asignar-chico',
+      icon: 'group_add',
+      tooltip: 'Asignar chico al micro'
+    },
+    { 
+      label: 'Desasignar Chofer', 
+      color: 'accent', 
+      action: 'desasignar-chofer',
+      icon: 'person_remove',
+      tooltip: 'Desasignar chofer del micro'
+    },
+    { 
+      label: 'Desasignar Chico', 
+      color: 'accent', 
+      action: 'desasignar-chico',
+      icon: 'group_remove',
+      tooltip: 'Desasignar un chico específico'
+    },
+    { 
+      label: 'Desasignar Chicos', 
+      color: 'accent', 
+      action: 'desasignar-chicos',
+      icon: 'clear_all',
+      tooltip: 'Desasignar todos los chicos del micro'
+    },
+    { 
+      label: 'Eliminar', 
+      color: 'warn', 
+      action: 'eliminar',
+      icon: 'delete',
+      tooltip: 'Eliminar micro del sistema'
+    }
   ];
 
   configFormulario: ConfigFormulario = {
@@ -60,7 +96,8 @@ export class MicrosComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private microsService: MicrosService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private errorHandler: ErrorHandlerService
   ) {}
 
   ngOnInit(): void {
@@ -120,7 +157,7 @@ export class MicrosComponent implements OnInit {
     this.microsService.eliminarMicro(micro.patente).subscribe({
       next: () => {
         this.datos = this.datos.filter(m => m.patente !== micro.patente);
-        this.mostrarExito('Micro eliminado exitosamente');
+        this.mostrarExito('Micro eliminado exitosamente. El chofer y todos los chicos han sido desasignados automáticamente.');
         this.cargando = false;
       },
       error: (error) => {
@@ -140,11 +177,24 @@ export class MicrosComponent implements OnInit {
     this.microsService.desasignarChofer(micro.patente).subscribe({
       next: () => {
         this.cargarMicros(); // Recargar datos para actualizar la tabla
-        this.mostrarExito('Chofer desasignado exitosamente');
+        this.mostrarExito(`✅ Chofer desasignado exitosamente del micro ${micro.patente}`);
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al desasignar el chofer: ' + error.message);
+        console.error('Error completo:', error);
+        
+        let mensaje = 'Error al desasignar el chofer';
+        
+        // Intentar extraer el mensaje del backend
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.message) {
+          mensaje = error.message;
+        } else if (typeof error.error === 'string') {
+          mensaje = error.error;
+        }
+        
+        this.mostrarError(`❌ ${mensaje}`);
         this.cargando = false;
       }
     });
@@ -180,11 +230,29 @@ export class MicrosComponent implements OnInit {
     this.microsService.asignarChofer(micro.patente, dniChofer).subscribe({
       next: () => {
         this.cargarMicros(); // Recargar datos para actualizar la tabla
-        this.mostrarExito('Chofer asignado exitosamente');
+        this.mostrarExito(`✅ Chofer asignado exitosamente al micro ${micro.patente}`);
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al asignar el chofer: ' + error.message);
+        console.error('Error completo en componente:', error);
+        console.error('Error.error:', error.error);
+        console.error('Error.message:', error.message);
+        console.error('Error.status:', error.status);
+        
+        // Intentar extraer directamente el mensaje de la respuesta
+        let mensaje = 'Error al asignar el chofer';
+        
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.status === 409) {
+          mensaje = 'No se puede asignar chofer. Este chofer ya fue asignado';
+        } else {
+          const extractedMessage = this.errorHandler.extractErrorMessage(error);
+          mensaje = extractedMessage;
+        }
+        
+        console.log('Mensaje final a mostrar:', mensaje);
+        this.mostrarError(mensaje);
         this.cargando = false;
       }
     });
@@ -200,11 +268,24 @@ export class MicrosComponent implements OnInit {
     this.microsService.asignarChico(micro.patente, dniChico).subscribe({
       next: () => {
         this.cargarMicros(); // Recargar datos para actualizar la tabla
-        this.mostrarExito('Chico asignado exitosamente');
+        this.mostrarExito(`✅ Alumno con DNI ${dniChico} asignado exitosamente al micro ${micro.patente}`);
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al asignar el chico: ' + error.message);
+        console.error('Error completo:', error);
+        
+        let mensaje = 'Error al asignar el alumno';
+        
+        // Intentar extraer el mensaje del backend
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.message) {
+          mensaje = error.message;
+        } else if (typeof error.error === 'string') {
+          mensaje = error.error;
+        }
+        
+        this.mostrarError(`❌ ${mensaje}`);
         this.cargando = false;
       }
     });
@@ -220,22 +301,63 @@ export class MicrosComponent implements OnInit {
     this.microsService.desasignarChico(dniChico).subscribe({
       next: () => {
         this.cargarMicros(); // Recargar datos para actualizar la tabla
-        this.mostrarExito('Chico desasignado exitosamente');
+        this.mostrarExito(`✅ Alumno con DNI ${dniChico} desasignado exitosamente`);
         this.cargando = false;
       },
       error: (error) => {
-        this.mostrarError('Error al desasignar el chico: ' + error.message);
+        console.error('Error completo:', error);
+        
+        let mensaje = 'Error al desasignar el alumno';
+        
+        // Intentar extraer el mensaje del backend
+        if (error.error && error.error.message) {
+          mensaje = error.error.message;
+        } else if (error.message) {
+          mensaje = error.message;
+        } else if (typeof error.error === 'string') {
+          mensaje = error.error;
+        }
+        
+        this.mostrarError(`❌ ${mensaje}`);
         this.cargando = false;
       }
     });
   }
 
   private mostrarExito(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
+    this.snackBar.open(`✅ ${mensaje}`, 'Cerrar', { 
+      duration: 4000, 
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 
   private mostrarError(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', { duration: 5000, panelClass: ['error-snackbar'] });
+    this.snackBar.open(`❌ ${mensaje}`, 'Cerrar', { 
+      duration: 6000, 
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarAdvertencia(mensaje: string): void {
+    this.snackBar.open(`⚠️ ${mensaje}`, 'Cerrar', {
+      duration: 5000,
+      panelClass: ['warning-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    this.snackBar.open(`ℹ️ ${mensaje}`, 'Cerrar', {
+      duration: 4000,
+      panelClass: ['info-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 
   manejarAccion(evento: { accion: string, fila: any }): void {

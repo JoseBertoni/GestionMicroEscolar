@@ -82,6 +82,28 @@
   color: #999 !important;
 }
 
+/* Estilos para campos deshabilitados */
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled {
+  opacity: 0.7;
+}
+
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled .mdc-notched-outline__leading,
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled .mdc-notched-outline__notch,
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled .mdc-notched-outline__trailing {
+  border-color: #e0e0e0 !important;
+  border-style: dashed !important;
+}
+
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled .mat-mdc-form-field-label {
+  color: #999 !important;
+}
+
+::ng-deep .campo-formulario .mat-mdc-form-field.mat-form-field-disabled input {
+  color: #666 !important;
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
 /* Estilos para Material Form Field */
 ::ng-deep .campo-formulario .mat-mdc-form-field-outline {
   border-radius: 8px;

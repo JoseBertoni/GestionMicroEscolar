@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { FormularioGenericoComponent, ConfigFormulario } from './formulario-generico.component';
@@ -18,6 +19,8 @@ export interface AccionBoton {
   label: string;
   color: 'primary' | 'accent' | 'warn';
   action: string;
+  icon?: string; // Icono de Material Icons
+  tooltip?: string; // Texto del tooltip
 }
 
 @Component({
@@ -28,6 +31,7 @@ export interface AccionBoton {
     MatCardModule,
     MatTableModule,
     MatButtonModule,
+    MatIconModule,
     MatTooltipModule
   ],
   templateUrl: './tabla-generica.component.html',
@@ -77,7 +81,12 @@ export class TablaGenericaComponent {
       ...this.configFormulario,
       titulo: accion === 'crear' ? this.configFormulario.titulo : `Modificar ${this.titulo.slice(0, -1)}`, // Remove 's' from plural
       accion: accion,
-      datosIniciales: accion === 'modificar' ? datosIniciales : undefined
+      datosIniciales: accion === 'modificar' ? datosIniciales : undefined,
+      // Deshabilitar campos clave primaria en modificación
+      campos: this.configFormulario.campos.map(campo => ({
+        ...campo,
+        disabled: accion === 'modificar' && (campo.key === 'dni' || campo.key === 'patente')
+      }))
     };
 
     const dialogRef = this.dialog.open(FormularioGenericoComponent, {
@@ -105,12 +114,20 @@ export class TablaGenericaComponent {
     const nombreElemento = this.obtenerNombreElemento(fila);
     const tipoElemento = this.titulo.slice(0, -1).toLowerCase(); // Remove 's' and lowercase
     
+    // Mensaje especial para micros que incluye información sobre desasignaciones automáticas
+    let mensaje = '';
+    if (tipoElemento === 'micro') {
+      mensaje = `¿Está seguro que desea eliminar el micro "${nombreElemento}"? Esta acción también desasignará automáticamente el chofer y todos los chicos asignados. Esta acción no se puede deshacer.`;
+    } else {
+      mensaje = `¿Está seguro que desea eliminar ${tipoElemento === 'chico' ? 'al' : tipoElemento === 'chofer' ? 'al' : 'el'} ${tipoElemento} "${nombreElemento}"? Esta acción no se puede deshacer.`;
+    }
+    
     const dialogRef = this.dialog.open(DialogoConfirmacionComponent, {
-      width: '400px',
+      width: '450px', // Ligeramente más ancho para el texto adicional de micros
       disableClose: true,
       data: {
         titulo: 'Confirmar Eliminación',
-        mensaje: `¿Está seguro que desea eliminar ${tipoElemento === 'chico' ? 'al' : tipoElemento === 'chofer' ? 'al' : 'el'} ${tipoElemento} "${nombreElemento}"? Esta acción no se puede deshacer.`,
+        mensaje: mensaje,
         textoBotonConfirmar: 'Eliminar',
         textoBotonCancelar: 'Cancelar',
         icono: 'delete',

@@ -37,8 +37,20 @@ export class ChoferesComponent implements OnInit {
   
 
   acciones: AccionBoton[] = [
-    { label: 'Modificar', color: 'accent', action: 'modificar' },
-    { label: 'Eliminar', color: 'warn', action: 'eliminar' }
+    { 
+      label: 'Modificar', 
+      color: 'accent', 
+      action: 'modificar',
+      icon: 'edit',
+      tooltip: 'Modificar información del chofer'
+    },
+    { 
+      label: 'Eliminar', 
+      color: 'warn', 
+      action: 'eliminar',
+      icon: 'delete',
+      tooltip: 'Eliminar chofer del sistema'
+    }
   ];
 
   configFormulario: ConfigFormulario = {
@@ -134,6 +146,28 @@ export class ChoferesComponent implements OnInit {
     });
   }
 
+  modificarChofer(evento: {original: Chofer, modificado: ChoferRequest}): void {
+    this.cargando = true;
+    const dniOriginal = evento.original.dni;
+    const datosModificados = evento.modificado;
+    
+    this.choferesService.modificarChofer(dniOriginal, datosModificados).subscribe({
+      next: (choferModificado) => {
+        const index = this.datos.findIndex(c => c.dni === dniOriginal);
+        if (index !== -1) {
+          this.datos[index] = { ...choferModificado, nombreCompleto: choferModificado.nombre, microAsignado: this.datos[index].microAsignado };
+          this.datos = [...this.datos];
+        }
+        this.mostrarExito('Chofer modificado exitosamente');
+        this.cargando = false;
+      },
+      error: (error) => {
+        this.mostrarError('Error al modificar el chofer: ' + error.message);
+        this.cargando = false;
+      }
+    });
+  }
+
   eliminarChofer(chofer: Chofer): void {
     this.cargando = true;
     this.choferesService.eliminarChofer(chofer.dni).subscribe({
@@ -150,10 +184,38 @@ export class ChoferesComponent implements OnInit {
   }
 
   private mostrarExito(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', { duration: 3000, panelClass: ['success-snackbar'] });
+    this.snackBar.open(`✅ ${mensaje}`, 'Cerrar', { 
+      duration: 4000, 
+      panelClass: ['success-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 
   private mostrarError(mensaje: string): void {
-    this.snackBar.open(mensaje, 'Cerrar', { duration: 5000, panelClass: ['error-snackbar'] });
+    this.snackBar.open(`❌ ${mensaje}`, 'Cerrar', { 
+      duration: 6000, 
+      panelClass: ['error-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarAdvertencia(mensaje: string): void {
+    this.snackBar.open(`⚠️ ${mensaje}`, 'Cerrar', {
+      duration: 5000,
+      panelClass: ['warning-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
+  }
+
+  private mostrarInfo(mensaje: string): void {
+    this.snackBar.open(`ℹ️ ${mensaje}`, 'Cerrar', {
+      duration: 4000,
+      panelClass: ['info-snackbar'],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 }

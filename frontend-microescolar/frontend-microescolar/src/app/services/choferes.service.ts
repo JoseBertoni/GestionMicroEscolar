@@ -29,6 +29,13 @@ export class ChoferesService {
     );
   }
 
+  modificarChofer(dni: string, chofer: ChoferRequest): Observable<Chofer> {
+    const url = `${this.baseUrl}/${dni}`;
+    return this.http.put<Chofer>(url, chofer).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     return throwError(() => new Error(error.message || 'Error del servidor'));
   }

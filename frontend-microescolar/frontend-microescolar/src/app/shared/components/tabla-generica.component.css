@@ -111,6 +111,27 @@ table.mat-mdc-table .mdc-data-table__row:hover {
   border-radius: 6px !important;
 }
 
+/* Estilos para botones de iconos */
+.tabla-compacta .mat-mdc-cell:last-child button {
+  margin: 0 2px;
+  min-width: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.tabla-compacta .mat-mdc-cell:last-child button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Espaciado entre botones de iconos */
+.tabla-compacta .mat-mdc-cell:last-child {
+  text-align: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+}
+
 @media (max-width: 768px) {
   .lista-chicos {
     flex-direction: column;
@@ -121,5 +142,18 @@ table.mat-mdc-table .mdc-data-table__row:hover {
   .chip-chico {
     font-size: 11px;
     padding: 3px 6px;
+  }
+  
+  /* Botones más pequeños en mobile */
+  .tabla-compacta .mat-mdc-cell:last-child button {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .tabla-compacta .mat-mdc-cell:last-child button mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 }

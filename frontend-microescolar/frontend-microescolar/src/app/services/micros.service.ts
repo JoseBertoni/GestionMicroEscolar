@@ -66,6 +66,9 @@ export class MicrosService {
   }
 
   private handleError(error: any): Observable<never> {
-    return throwError(() => new Error(error.message || 'Error del servidor'));
+    // NO transformar el error, pasarlo tal como viene del HttpClient
+    // para que mantenga toda la información (status, error, message, etc.)
+    console.log('MicrosService handleError - Error original:', error);
+    return throwError(() => error);
   }
 }

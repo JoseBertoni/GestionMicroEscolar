@@ -1,5 +1,6 @@
 ﻿using Domain.DTO;
 using GestionMicroEscolar.Service;
+using GestionMicroEscolar.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GestionMicroEscolar.Controllers
@@ -32,6 +33,13 @@ namespace GestionMicroEscolar.Controllers
             return Created($"api/micros/{patente}", new { patente });
         }
 
+        [HttpPut("{patente}")]
+        public async Task<IActionResult> Actualizar(string patente)
+        {
+            await _service.ActualizarAsync(patente);
+            return Ok(new { patente });
+        }
+
         [HttpDelete("{patente}")]
         public async Task<IActionResult> Eliminar(string patente)
         {
@@ -42,15 +50,61 @@ namespace GestionMicroEscolar.Controllers
         [HttpPost("{patente}/asignar-chofer/{dniChofer}")]
         public async Task<IActionResult> AsignarChofer(string patente, string dniChofer)
         {
-            await _service.AsignarChoferAsync(patente, dniChofer);
-            return Ok();
+            Console.WriteLine($"=== CONTROLADOR: Asignando chofer {dniChofer} al micro {patente} ===");
+            try
+            {
+                await _service.AsignarChoferAsync(patente, dniChofer);
+                Console.WriteLine("=== CONTROLADOR: Asignación exitosa ===");
+                return Ok();
+            }
+            catch (ChoferAlreadyAssignedException ex)
+            {
+                Console.WriteLine($"=== CONTROLADOR: ChoferAlreadyAssignedException - {ex.UserMessage} ===");
+                var response = new { message = ex.UserMessage };
+                Console.WriteLine($"=== CONTROLADOR: Enviando respuesta: {System.Text.Json.JsonSerializer.Serialize(response)} ===");
+                return Conflict(response);
+            }
+            catch (MicroNotFoundException ex)
+            {
+                Console.WriteLine($"=== CONTROLADOR: MicroNotFoundException - {ex.UserMessage} ===");
+                return NotFound(new { message = ex.UserMessage });
+            }
+            catch (ChoferNotFoundException ex)
+            {
+                Console.WriteLine($"=== CONTROLADOR: ChoferNotFoundException - {ex.UserMessage} ===");
+                return NotFound(new { message = ex.UserMessage });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"=== CONTROLADOR: Exception genérica - {ex.Message} ===");
+                return StatusCode(500, new { message = "Error interno del servidor: " + ex.Message });
+            }
         }
 
         [HttpPost("{patente}/agregar-chico/{dniChico}")]
         public async Task<IActionResult> AgregarChico(string patente, string dniChico)
         {
-            await _service.AgregarChicoAsync(patente, dniChico);
-            return Ok();
+            try
+            {
+                await _service.AgregarChicoAsync(patente, dniChico);
+                return Ok();
+            }
+            catch (ChicoAlreadyAssignedException ex)
+            {
+                return Conflict(new { message = ex.UserMessage });
+            }
+            catch (MicroNotFoundException ex)
+            {
+                return NotFound(new { message = ex.UserMessage });
+            }
+            catch (ChicoNotFoundException ex)
+            {
+                return NotFound(new { message = ex.UserMessage });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor: " + ex.Message });
+            }
         }
 
         [HttpDelete("{patente}/desasignar-chofer")]
