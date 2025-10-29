@@ -229,7 +229,7 @@ export class MicrosComponent implements OnInit {
     this.cargando = true;
     this.microsService.asignarChofer(micro.patente, dniChofer).subscribe({
       next: () => {
-        this.cargarMicros(); // Recargar datos para actualizar la tabla
+        this.cargarMicros();
         this.mostrarExito(`✅ Chofer asignado exitosamente al micro ${micro.patente}`);
         this.cargando = false;
       },
@@ -239,7 +239,6 @@ export class MicrosComponent implements OnInit {
         console.error('Error.message:', error.message);
         console.error('Error.status:', error.status);
         
-        // Intentar extraer directamente el mensaje de la respuesta
         let mensaje = 'Error al asignar el chofer';
         
         if (error.error && error.error.message) {
@@ -267,7 +266,7 @@ export class MicrosComponent implements OnInit {
     this.cargando = true;
     this.microsService.asignarChico(micro.patente, dniChico).subscribe({
       next: () => {
-        this.cargarMicros(); // Recargar datos para actualizar la tabla
+        this.cargarMicros(); 
         this.mostrarExito(`✅ Alumno con DNI ${dniChico} asignado exitosamente al micro ${micro.patente}`);
         this.cargando = false;
       },
@@ -276,7 +275,6 @@ export class MicrosComponent implements OnInit {
         
         let mensaje = 'Error al asignar el alumno';
         
-        // Intentar extraer el mensaje del backend
         if (error.error && error.error.message) {
           mensaje = error.error.message;
         } else if (error.message) {
@@ -300,7 +298,7 @@ export class MicrosComponent implements OnInit {
     this.cargando = true;
     this.microsService.desasignarChico(dniChico).subscribe({
       next: () => {
-        this.cargarMicros(); // Recargar datos para actualizar la tabla
+        this.cargarMicros(); 
         this.mostrarExito(`✅ Alumno con DNI ${dniChico} desasignado exitosamente`);
         this.cargando = false;
       },
@@ -309,7 +307,6 @@ export class MicrosComponent implements OnInit {
         
         let mensaje = 'Error al desasignar el alumno';
         
-        // Intentar extraer el mensaje del backend
         if (error.error && error.error.message) {
           mensaje = error.error.message;
         } else if (error.message) {

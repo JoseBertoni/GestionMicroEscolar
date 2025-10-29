@@ -30,7 +30,6 @@ export class DialogoConfirmacionComponent {
     public dialogRef: MatDialogRef<DialogoConfirmacionComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogoConfirmacionData
   ) {
-    // Valores por defecto
     this.data.textoBotonConfirmar = this.data.textoBotonConfirmar || 'Confirmar';
     this.data.textoBotonCancelar = this.data.textoBotonCancelar || 'Cancelar';
     this.data.icono = this.data.icono || 'warning';

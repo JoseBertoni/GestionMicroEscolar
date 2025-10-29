@@ -19,8 +19,8 @@ export interface AccionBoton {
   label: string;
   color: 'primary' | 'accent' | 'warn';
   action: string;
-  icon?: string; // Icono de Material Icons
-  tooltip?: string; // Texto del tooltip
+  icon?: string; 
+  tooltip?: string; 
 }
 
 @Component({
@@ -68,7 +68,6 @@ export class TablaGenericaComponent {
     } else if (accion === 'eliminar') {
       this.confirmarEliminacion(fila);
     } else {
-      // Emitir evento para acciones personalizadas
       this.accionPersonalizada.emit({ accion, fila });
     }
   }
@@ -76,13 +75,11 @@ export class TablaGenericaComponent {
   private abrirFormulario(accion: string, datosIniciales?: any) {
     if (!this.configFormulario) return;
 
-    // Crear configuración específica para la acción
     const configFormulario = {
       ...this.configFormulario,
       titulo: accion === 'crear' ? this.configFormulario.titulo : `Modificar ${this.titulo.slice(0, -1)}`, // Remove 's' from plural
       accion: accion,
       datosIniciales: accion === 'modificar' ? datosIniciales : undefined,
-      // Deshabilitar campos clave primaria en modificación
       campos: this.configFormulario.campos.map(campo => ({
         ...campo,
         disabled: accion === 'modificar' && (campo.key === 'dni' || campo.key === 'patente')
@@ -105,16 +102,13 @@ export class TablaGenericaComponent {
             modificado: resultado.datos
           });
         }
-        // Para crear, se maneja con el evento crearElemento existente
       }
     });
   }
 
   private confirmarEliminacion(fila: any): void {
     const nombreElemento = this.obtenerNombreElemento(fila);
-    const tipoElemento = this.titulo.slice(0, -1).toLowerCase(); // Remove 's' and lowercase
-    
-    // Mensaje especial para micros que incluye información sobre desasignaciones automáticas
+    const tipoElemento = this.titulo.slice(0, -1).toLowerCase(); 
     let mensaje = '';
     if (tipoElemento === 'micro') {
       mensaje = `¿Está seguro que desea eliminar el micro "${nombreElemento}"? Esta acción también desasignará automáticamente el chofer y todos los chicos asignados. Esta acción no se puede deshacer.`;
@@ -123,7 +117,7 @@ export class TablaGenericaComponent {
     }
     
     const dialogRef = this.dialog.open(DialogoConfirmacionComponent, {
-      width: '450px', // Ligeramente más ancho para el texto adicional de micros
+      width: '450px', 
       disableClose: true,
       data: {
         titulo: 'Confirmar Eliminación',
@@ -145,7 +139,6 @@ export class TablaGenericaComponent {
   }
 
   private obtenerNombreElemento(fila: any): string {
-    // Intenta obtener el nombre más representativo del elemento
     if (fila.nombre) return fila.nombre;
     if (fila.numero) return fila.numero;
     if (fila.patente) return fila.patente;

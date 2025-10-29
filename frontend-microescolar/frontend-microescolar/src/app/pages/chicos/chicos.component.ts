@@ -86,13 +86,11 @@ export class ChicosComponent implements OnInit {
   cargarChicos(): void {
     this.cargando = true;
     
-    // Hacer ambas llamadas en paralelo
     forkJoin({
       chicos: this.chicosService.obtenerChicos(),
       micros: this.microsService.obtenerMicros()
     }).subscribe({
       next: ({ chicos, micros }) => {
-        // Crear un mapa de DNI chico -> patente micro
         const chicoMicroMap = new Map<string, string>();
         micros.forEach(micro => {
           if (micro.chicos && micro.chicos.length > 0) {
@@ -102,7 +100,6 @@ export class ChicosComponent implements OnInit {
           }
         });
 
-        // Mapear los datos para mostrar correctamente en la tabla
         this.datos = chicos.map(chico => ({
           ...chico,
           microAsignado: chicoMicroMap.get(chico.dni) || 'Sin asignar'

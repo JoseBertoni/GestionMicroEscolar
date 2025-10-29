@@ -14,7 +14,7 @@ export interface CampoFormulario {
   type: 'text' | 'number' | 'email';
   required?: boolean;
   placeholder?: string;
-  disabled?: boolean; // Campo para deshabilitar
+  disabled?: boolean; 
 }
 
 export interface ConfigFormulario {
@@ -60,7 +60,6 @@ export class FormularioGenericoComponent {
         validators.push(Validators.required);
       }
       
-      // Pre-llenar con datos iniciales si existen
       const valorInicial = this.data.datosIniciales ? 
         (this.data.datosIniciales[campo.key] || '') : '';
       
@@ -75,10 +74,8 @@ export class FormularioGenericoComponent {
 
   onSubmit(): void {
     if (this.formulario.valid) {
-      // Incluir valores de campos deshabilitados también
       const formValue = { ...this.formulario.value };
       
-      // Agregar valores de campos deshabilitados
       this.data.campos.forEach(campo => {
         if (campo.disabled) {
           formValue[campo.key] = this.formulario.get(campo.key)?.value;
@@ -90,7 +87,6 @@ export class FormularioGenericoComponent {
         datos: formValue
       });
     } else {
-      // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.formulario.controls).forEach(key => {
         this.formulario.get(key)?.markAsTouched();
       });

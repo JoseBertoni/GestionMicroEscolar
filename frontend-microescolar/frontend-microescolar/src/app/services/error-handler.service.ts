@@ -7,38 +7,29 @@ export class ErrorHandlerService {
 
   constructor() { }
 
-  /**
-   * Extrae el mensaje de error más específico del objeto de error HTTP
-   * @param error - Error object from HTTP request
-   * @returns string - Mensaje de error formateado
-   */
+ 
   extractErrorMessage(error: any): string {
     console.log('ErrorHandler - Error completo:', error);
     console.log('ErrorHandler - error.error:', error.error);
     console.log('ErrorHandler - error.status:', error.status);
     console.log('ErrorHandler - error.message:', error.message);
     
-    // Primero intentar obtener el mensaje del cuerpo de la respuesta
     if (error && error.error) {
       console.log('ErrorHandler - Tipo de error.error:', typeof error.error);
       
-      // Si error.error es un objeto
       if (typeof error.error === 'object' && error.error !== null) {
         console.log('ErrorHandler - error.error es objeto:', error.error);
         
-        // Buscar la propiedad message
         if (error.error.message) {
           console.log('ErrorHandler - Encontrado error.error.message:', error.error.message);
           return error.error.message;
         }
         
-        // Buscar otras variantes
         if (error.error.Message) {
           console.log('ErrorHandler - Encontrado error.error.Message:', error.error.Message);
           return error.error.Message;
         }
         
-        // Si es un objeto pero no tiene message, convertir a string
         const objString = JSON.stringify(error.error);
         console.log('ErrorHandler - Objeto como string:', objString);
         
@@ -54,11 +45,9 @@ export class ErrorHandlerService {
         }
       }
       
-      // Si error.error es un string
       if (typeof error.error === 'string') {
         console.log('ErrorHandler - error.error es string:', error.error);
         
-        // Intentar parsear como JSON
         try {
           const parsed = JSON.parse(error.error);
           if (parsed.message) {
@@ -66,14 +55,12 @@ export class ErrorHandlerService {
             return parsed.message;
           }
         } catch (e) {
-          // Si no es JSON válido, retornar el string directamente
           console.log('ErrorHandler - String directo:', error.error);
           return error.error;
         }
       }
     }
     
-    // Si tenemos status 409, usar mensaje específico para chofer
     if (error.status === 409) {
       console.log('ErrorHandler - Status 409 detectado, usando mensaje específico');
       return 'No se puede asignar chofer. Este chofer ya fue asignado';
@@ -105,11 +92,7 @@ export class ErrorHandlerService {
     }
   }
 
-  /**
-   * Extrae el código de error específico si está disponible
-   * @param error - Error object from HTTP request
-   * @returns string | null - Código de error o null
-   */
+
   extractErrorCode(error: any): string | null {
     if (error.error && error.error.errorCode) {
       return error.error.errorCode;
@@ -117,11 +100,7 @@ export class ErrorHandlerService {
     return null;
   }
 
-  /**
-   * Determina si el error es de tipo "no encontrado"
-   * @param error - Error object from HTTP request
-   * @returns boolean
-   */
+
   isNotFoundError(error: any): boolean {
     const errorCode = this.extractErrorCode(error);
     return error.status === 404 || 
@@ -129,11 +108,7 @@ export class ErrorHandlerService {
            false;
   }
 
-  /**
-   * Determina si el error es de tipo "conflicto" (duplicado/ya asignado)
-   * @param error - Error object from HTTP request
-   * @returns boolean
-   */
+ 
   isConflictError(error: any): boolean {
     const errorCode = this.extractErrorCode(error);
     return error.status === 409 || 
@@ -142,11 +117,7 @@ export class ErrorHandlerService {
            false;
   }
 
-  /**
-   * Determina si el error es de validación/datos inválidos
-   * @param error - Error object from HTTP request
-   * @returns boolean
-   */
+ 
   isValidationError(error: any): boolean {
     const errorCode = this.extractErrorCode(error);
     return error.status === 400 || 
