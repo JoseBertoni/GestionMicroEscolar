@@ -137,8 +137,6 @@ Usuario Frontend ──► Nginx Proxy ──► API Backend ──► Entity Fr
 
 ## 🚀 Instalación y Configuración
 
-### Opción 1: Ejecución con Docker (Recomendado)
-
 #### 1. Clonar el Repositorio
 ```bash
 git clone https://github.com/JoseBertoni/GestionMicroEscolar.git
@@ -163,28 +161,6 @@ docker-compose ps
 - **Frontend**: http://localhost:4200
 - **Backend API**: http://localhost:8080
 - **Swagger/Documentación**: http://localhost:8080/swagger
-
-### Opción 2: Desarrollo Local
-
-#### 1. Configurar Backend (.NET)
-```bash
-cd GestionMicroEscolar
-dotnet restore
-dotnet ef database update
-dotnet run
-```
-
-#### 2. Configurar Frontend (Angular)
-```bash
-cd frontend-microescolar/frontend-microescolar
-npm install
-ng serve
-```
-
-#### 3. Configurar Base de Datos
-- Instalar SQL Server
-- Actualizar cadena de conexión en `appsettings.json`
-- Ejecutar migraciones: `dotnet ef database update`
 
 ## 🖥️ Uso del Sistema
 
