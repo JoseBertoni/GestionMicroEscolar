@@ -17,13 +17,23 @@ namespace GestionMicroEscolar.Service
         public async Task<List<ChoferDto>> ListarAsync()
         {
             var list = await _repo.GetAllAsync();
-            return list.Select(c => new ChoferDto { Dni = c.Dni, Nombre = c.Nombre }).ToList();
+            return list.Select(c => new ChoferDto 
+            { 
+                Dni = c.Dni, 
+                Nombre = c.Nombre, 
+                MicroPatente = c.MicroPatente 
+            }).ToList();
         }
 
         public async Task<ChoferDto?> ObtenerAsync(string dni)
         {
             var c = await _repo.GetByDniAsync(dni);
-            return c is null ? null : new ChoferDto { Dni = c.Dni, Nombre = c.Nombre };
+            return c is null ? null : new ChoferDto 
+            { 
+                Dni = c.Dni, 
+                Nombre = c.Nombre, 
+                MicroPatente = c.MicroPatente 
+            };
         }
 
         public async Task CrearAsync(ChoferDto dto)
@@ -32,6 +42,17 @@ namespace GestionMicroEscolar.Service
                 throw new Exception("El chofer ya existe.");
 
             await _repo.AddAsync(new Chofer { Dni = dto.Dni, Nombre = dto.Nombre });
+        }
+
+        public async Task ActualizarAsync(ChoferDto dto)
+        {
+            var chofer = await _repo.GetByDniAsync(dto.Dni)
+                ?? throw new Exception("El chofer no existe.");
+
+            // Solo se actualiza el nombre. El MicroPatente se maneja exclusivamente 
+            // a través de los endpoints de asignación en MicroController
+            chofer.Nombre = dto.Nombre;
+            await _repo.UpdateAsync(chofer);
         }
 
         public async Task EliminarAsync(string dni)

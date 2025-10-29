@@ -33,6 +33,16 @@ namespace GestionMicroEscolar.Controllers
             return Created($"api/choferes/{dto.Dni}", dto);
         }
 
+        [HttpPut("{dni}")]
+        public async Task<IActionResult> Actualizar(string dni, ChoferDto dto)
+        {
+            if (dni != dto.Dni)
+                return BadRequest("El DNI de la URL no coincide con el DNI del objeto.");
+
+            await _service.ActualizarAsync(dto);
+            return Ok(dto);
+        }
+
         [HttpDelete("{dni}")]
         public async Task<IActionResult> Eliminar(string dni)
         {

@@ -7,7 +7,6 @@ namespace Domain.Entidades
         [Key]
         public string Patente { get; set; } = default!;
 
-        public string ChoferDni { get; set; } = default!;
         public Chofer? Chofer { get; set; }
 
         public List<Chico> Chicos { get; set; } = new();

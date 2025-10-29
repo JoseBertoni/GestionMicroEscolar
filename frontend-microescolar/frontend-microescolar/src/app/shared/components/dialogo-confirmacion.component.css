@@ -1,0 +1,106 @@
+.dialogo-container {
+  min-width: 350px;
+  max-width: 500px;
+  padding: 0;
+}
+
+.dialogo-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.icono-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono-titulo mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.icono-warn {
+  color: #f44336;
+}
+
+.icono-primary {
+  color: #1976d2;
+}
+
+.icono-accent {
+  color: #ff4081;
+}
+
+.dialogo-header h2 {
+  margin: 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.dialogo-contenido {
+  padding: 20px 24px;
+  margin: 0;
+  min-height: auto;
+}
+
+.dialogo-contenido p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.dialogo-acciones {
+  padding: 16px 24px 24px;
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-cancelar {
+  color: #666;
+  border: 1px solid #e0e0e0;
+  padding: 8px 20px;
+}
+
+.btn-cancelar:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+.btn-confirmar {
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+/* Animaciones */
+.dialogo-container {
+  animation: fadeInScale 0.25s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Efectos hover para botones */
+.btn-confirmar:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.btn-cancelar:hover {
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}

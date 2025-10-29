@@ -3,19 +3,16 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GestionMicroEscolar.Data.Migrations
+namespace GestionMicroEscolar.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251026024141_InitialCreate")]
-    partial class InitialCreate
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,11 +45,18 @@ namespace GestionMicroEscolar.Data.Migrations
                     b.Property<string>("Dni")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("MicroPatente")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Dni");
+
+                    b.HasIndex("MicroPatente")
+                        .IsUnique()
+                        .HasFilter("[MicroPatente] IS NOT NULL");
 
                     b.ToTable("Choferes");
                 });
@@ -62,14 +66,7 @@ namespace GestionMicroEscolar.Data.Migrations
                     b.Property<string>("Patente")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ChoferDni")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Patente");
-
-                    b.HasIndex("ChoferDni")
-                        .IsUnique();
 
                     b.ToTable("Micros");
                 });
@@ -78,30 +75,27 @@ namespace GestionMicroEscolar.Data.Migrations
                 {
                     b.HasOne("Domain.Entidades.Micro", "Micro")
                         .WithMany("Chicos")
-                        .HasForeignKey("MicroPatente");
+                        .HasForeignKey("MicroPatente")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Micro");
                 });
 
-            modelBuilder.Entity("Domain.Entidades.Micro", b =>
-                {
-                    b.HasOne("Domain.Entidades.Chofer", "Chofer")
-                        .WithOne("Micro")
-                        .HasForeignKey("Domain.Entidades.Micro", "ChoferDni")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chofer");
-                });
-
             modelBuilder.Entity("Domain.Entidades.Chofer", b =>
                 {
+                    b.HasOne("Domain.Entidades.Micro", "Micro")
+                        .WithOne("Chofer")
+                        .HasForeignKey("Domain.Entidades.Chofer", "MicroPatente")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Micro");
                 });
 
             modelBuilder.Entity("Domain.Entidades.Micro", b =>
                 {
                     b.Navigation("Chicos");
+
+                    b.Navigation("Chofer");
                 });
 #pragma warning restore 612, 618
         }

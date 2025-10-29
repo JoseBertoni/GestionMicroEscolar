@@ -1,0 +1,17 @@
+<div *ngIf="cargando" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Cargando...</p>
+</div>
+
+<app-tabla-generica 
+  *ngIf="!cargando"
+  [titulo]="titulo"
+  [columnas]="columnas" 
+  [datos]="datos" 
+  [acciones]="acciones"
+  [configFormulario]="configFormulario"
+  [mostrarBotonCrearPersonalizado]="true"
+  (crearElemento)="abrirFormularioCrear()"
+  (eliminarElemento)="eliminarChofer($event)"
+  (modificarElemento)="modificarChofer($event)">
+</app-tabla-generica>

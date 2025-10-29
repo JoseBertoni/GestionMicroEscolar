@@ -1,0 +1,159 @@
+mat-card {
+  padding: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 90%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tabla-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.tabla-compacta {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.tabla-compacta .mat-mdc-header-cell,
+.tabla-compacta .mat-mdc-cell {
+  padding: 6px 8px !important;
+  font-size: 14px;
+}
+
+.tabla-compacta .mat-mdc-header-cell:first-child,
+.tabla-compacta .mat-mdc-cell:first-child {
+  padding-left: 12px !important;
+}
+
+.tabla-compacta .mat-mdc-header-cell:last-child,
+.tabla-compacta .mat-mdc-cell:last-child {
+  padding-right: 12px !important;
+}
+
+.tabla-compacta .mat-mdc-header-cell:last-child {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+.tabla-compacta .mat-mdc-cell:last-child {
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+.tabla-wrapper {
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table.mat-mdc-table .mdc-data-table__row {
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+table.mat-mdc-table .mdc-data-table__row:last-child {
+  border-bottom: none;
+}
+
+table.mat-mdc-table .mdc-data-table__row:hover {
+  background: rgba(0,0,0,0.04);
+  transition: background 0.2s ease;
+}
+
+.lista-chicos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.chip-chico {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.cantidad-chicos-tooltip {
+  cursor: pointer;
+  color: #1976d2;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #e3f2fd;
+  transition: all 0.2s ease;
+}
+
+.cantidad-chicos-tooltip:hover {
+  background-color: #bbdefb;
+  transform: scale(1.05);
+}
+
+::ng-deep .tooltip-chicos {
+  background-color: #37474f !important;
+  color: white !important;
+  font-size: 12px !important;
+  max-width: 300px !important;
+  white-space: pre-line !important;
+  line-height: 1.4 !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+}
+
+/* Estilos para botones de iconos */
+.tabla-compacta .mat-mdc-cell:last-child button {
+  margin: 0 2px;
+  min-width: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.tabla-compacta .mat-mdc-cell:last-child button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Espaciado entre botones de iconos */
+.tabla-compacta .mat-mdc-cell:last-child {
+  text-align: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+}
+
+@media (max-width: 768px) {
+  .lista-chicos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  
+  .chip-chico {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  
+  /* Botones más pequeños en mobile */
+  .tabla-compacta .mat-mdc-cell:last-child button {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .tabla-compacta .mat-mdc-cell:last-child button mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}

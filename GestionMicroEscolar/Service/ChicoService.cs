@@ -33,12 +33,21 @@ namespace GestionMicroEscolar.Service
             await _repo.AddAsync(new Chico { Dni = dto.Dni, Nombre = dto.Nombre });
         }
 
+        public async Task ActualizarAsync(ChicoDto dto)
+        {
+            var chico = await _repo.GetByDniAsync(dto.Dni)
+                ?? throw new Exception("El alumno no existe.");
+
+            chico.Nombre = dto.Nombre;
+            await _repo.UpdateAsync(chico);
+        }
+
         public async Task EliminarAsync(string dni)
         {
             var c = await _repo.GetByDniAsync(dni)
                 ?? throw new Exception("El alumno no existe.");
 
-            if (c.MicroPatente is not null)
+            if (c.Micro?.Patente is not null)
                 throw new Exception("No se puede eliminar un alumno asignado a un micro.");
 
             await _repo.DeleteAsync(c);

@@ -1,0 +1,53 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 💥 Centra todo */
+  margin-top: 20px;
+}
+
+.nav-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-buttons a {
+  text-decoration: none;
+  font-size: 16px;
+  color: #3f51b5;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+  transition: border-color 0.3s;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  background: transparent;
+  color: #111;
+  box-shadow: none;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+button {
+  font-size: 16px;
+  text-transform: none;
+}
+
+button.active {
+  border: 2px solid #3f51b5 !important;
+  background-color: #e8eafe;
+}

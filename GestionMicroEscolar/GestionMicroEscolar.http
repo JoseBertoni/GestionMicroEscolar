@@ -4,3 +4,139 @@ GET {{GestionMicroEscolar_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+# ========== CHICOS ==========
+
+# Listar todos los chicos
+GET {{GestionMicroEscolar_HostAddress}}/api/Chico
+Accept: application/json
+
+###
+
+# Obtener un chico específico
+GET {{GestionMicroEscolar_HostAddress}}/api/Chico/12345678
+Accept: application/json
+
+###
+
+# Crear un nuevo chico
+POST {{GestionMicroEscolar_HostAddress}}/api/Chico
+Content-Type: application/json
+
+{
+  "dni": "12345678",
+  "nombre": "Juan Pérez"
+}
+
+###
+
+# Actualizar un chico existente
+PUT {{GestionMicroEscolar_HostAddress}}/api/Chico/12345678
+Content-Type: application/json
+
+{
+  "dni": "12345678",
+  "nombre": "Juan Carlos Pérez"
+}
+
+###
+
+# Eliminar un chico
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Chico/12345678
+
+###
+
+# ========== CHOFERES ==========
+
+# Listar todos los choferes
+GET {{GestionMicroEscolar_HostAddress}}/api/Chofer
+Accept: application/json
+
+###
+
+# Obtener un chofer específico
+GET {{GestionMicroEscolar_HostAddress}}/api/Chofer/87654321
+Accept: application/json
+
+###
+
+# Crear un nuevo chofer
+POST {{GestionMicroEscolar_HostAddress}}/api/Chofer
+Content-Type: application/json
+
+{
+  "dni": "87654321",
+  "nombre": "Carlos González"
+}
+
+###
+
+# Actualizar un chofer existente
+PUT {{GestionMicroEscolar_HostAddress}}/api/Chofer/87654321
+Content-Type: application/json
+
+{
+  "dni": "87654321",
+  "nombre": "Carlos Alberto González"
+}
+
+###
+
+# Eliminar un chofer
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Chofer/87654321
+
+###
+
+# ========== MICROS ==========
+
+# Listar todos los micros
+GET {{GestionMicroEscolar_HostAddress}}/api/Micro
+Accept: application/json
+
+###
+
+# Obtener un micro específico
+GET {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123
+Accept: application/json
+
+###
+
+# Crear un nuevo micro
+POST {{GestionMicroEscolar_HostAddress}}/api/Micro?patente=ABC123
+
+###
+
+# Actualizar un micro existente (valida que existe)
+PUT {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123
+
+###
+
+# Eliminar un micro
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123
+
+###
+
+# Asignar chofer a micro
+POST {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123/asignar-chofer/87654321
+
+###
+
+# Agregar chico a micro
+POST {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123/agregar-chico/12345678
+
+###
+
+# Desasignar chofer de micro
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123/desasignar-chofer
+
+###
+
+# Desasignar chico de micro
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Micro/chico/12345678/desasignar
+
+###
+
+# Desasignar todos los chicos de un micro
+DELETE {{GestionMicroEscolar_HostAddress}}/api/Micro/ABC123/desasignar-todos-chicos
+
+###
