@@ -1,4 +1,5 @@
 ﻿using Domain.Entidades;
+using GestionMicroEscolar.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data
@@ -13,6 +14,7 @@ namespace Data
         public DbSet<Micro> Micros => Set<Micro>();
         public DbSet<Chico> Chicos => Set<Chico>();
         public DbSet<Chofer> Choferes => Set<Chofer>();
+        public DbSet<Usuario> Usuarios => Set<Usuario>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +31,11 @@ namespace Data
                 .WithOne(c => c.Micro)
                 .HasForeignKey<Chofer>(c => c.MicroPatente)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Configurar índice único para email de usuario
+            modelBuilder.Entity<Usuario>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
