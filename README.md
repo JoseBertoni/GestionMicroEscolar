@@ -340,22 +340,6 @@ PUT    /api/Micro/{id}     # Actualizar micro
 DELETE /api/Micro/{id}     # Eliminar micro
 ```
 
-### Ejemplo de Uso con cURL
-```bash
-# Registro de usuario
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"nombre":"Juan Pérez","email":"juan@example.com","password":"MiPassword123"}'
-
-# Login
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"juan@example.com","password":"MiPassword123"}'
-
-# Obtener estudiantes (con token)
-curl -X GET http://localhost:8080/api/Chico \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
 
 ## 🗃️ Base de Datos
 
@@ -391,25 +375,6 @@ curl -X GET http://localhost:8080/api/Chico \
 - **Micros ← 1:1 → Choferes**: Un chofer es asignado a un micro específico
 - **Usuarios**: Tabla independiente para autenticación
 
-### Scripts de Base de Datos
-```sql
--- Verificar datos
-SELECT * FROM Chicos;
-SELECT * FROM Micros;
-SELECT * FROM Choferes;
-SELECT * FROM Usuarios;
-
--- Estadísticas
-SELECT 
-    m.Patente,
-    m.Capacidad,
-    COUNT(c.Id) as EstudiantesAsignados,
-    ch.Nombre + ' ' + ch.Apellido as ChoferAsignado
-FROM Micros m
-LEFT JOIN Chicos c ON c.MicroId = m.Id
-LEFT JOIN Choferes ch ON ch.Id = m.ChoferAsignado
-GROUP BY m.Id, m.Patente, m.Capacidad, ch.Nombre, ch.Apellido;
-```
 
 ## 🔐 Características de Seguridad
 
@@ -428,13 +393,6 @@ GROUP BY m.Id, m.Patente, m.Capacidad, ch.Nombre, ch.Apellido;
 - **Validación de modelos** automática
 - **Manejo de errores** centralizado
 - **CORS configurado** para producción
-
-### Headers de Seguridad
-```
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-```
 
 ## 💻 Desarrollo
 
@@ -496,41 +454,6 @@ ng build --stats-json
 npx webpack-bundle-analyzer dist/stats.json
 ```
 
-### Variables de Entorno
-
-#### Backend
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=GestionMicroEscolar;Trusted_Connection=true;"
-  },
-  "Jwt": {
-    "SecretKey": "MiClaveSecretaSuperSegura123456789",
-    "Issuer": "GestionMicroEscolar",
-    "Audience": "GestionMicroEscolarUsers",
-    "ExpiryMinutes": 1440
-  }
-}
-```
-
-#### Frontend
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: '/api'  // Proxy en desarrollo, directo en producción
-};
-```
-
-### Estructura de Commits
-```
-feat: nueva funcionalidad
-fix: corrección de bug
-docs: documentación
-style: formato, sin cambios de código
-refactor: refactorización
-test: agregar/modificar tests
-chore: tareas de mantenimiento
-```
 
 ## 🔧 Solución de Problemas
 
@@ -586,107 +509,19 @@ builder.Services.AddCors(options =>
 });
 ```
 
-### Logs y Debugging
-
-#### Ver todos los logs
-```bash
-docker-compose logs -f
-```
-
-#### Logs específicos por servicio
-```bash
-docker-compose logs -f frontend
-docker-compose logs -f api
-docker-compose logs -f db
-```
-
-#### Acceder a contenedores para debug
-```bash
-# Backend
-docker exec -it gestionmicroescolar-api bash
-
-# Frontend
-docker exec -it gestionmicroescolar-frontend sh
-
-# Base de datos
-docker exec -it gestionmicroescolar-db bash
-```
-
-### Performance y Monitoreo
-
-#### Verificar uso de recursos
-```bash
-docker stats
-```
-
-#### Analizar tamaño de imágenes
-```bash
-docker images
-```
-
-#### Limpiar recursos no utilizados
-```bash
-docker system prune -a
-```
-
-## 👥 Contribución
-
-### Flujo de Trabajo
-1. **Fork** del repositorio
-2. **Crear rama** para feature (`git checkout -b feature/nueva-funcionalidad`)
-3. **Commits** con mensajes descriptivos
-4. **Push** a la rama (`git push origin feature/nueva-funcionalidad`)
-5. **Pull Request** con descripción detallada
-
 ### Estándares de Código
 
 #### Backend (.NET)
-- Seguir convenciones de C#
+- Segur convenciones de C#
 - Usar `async/await` para operaciones asíncronas
 - Implementar manejo de errores consistente
 - Documentar métodos públicos con XML comments
 
 #### Frontend (Angular)
-- Seguir Angular Style Guide
+- Segui Angular Style Guide
 - Usar TypeScript estricto
 - Implementar OnPush change detection cuando sea posible
 - Escribir tests unitarios
 
-### Testing
-```bash
-# Backend
-dotnet test
-
-# Frontend
-ng test
-ng e2e
-```
-
----
-
-## 📞 Soporte
-
-Para problemas, sugerencias o consultas:
-
-- **Issues**: Crear un issue en GitHub
-- **Documentación**: Revisar este README y README-Docker.md
-- **Logs**: Siempre incluir logs relevantes al reportar problemas
-
----
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
----
-
-## 🙏 Agradecimientos
-
-- Equipo de desarrollo Angular
-- Comunidad .NET Core
-- Documentación de Docker
-- Contribuidores del proyecto
-
----
 
 **¡Gracias por usar Gestión Micro Escolar!** 🚌✨
