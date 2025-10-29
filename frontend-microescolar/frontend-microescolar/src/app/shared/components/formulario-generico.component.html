@@ -1,0 +1,53 @@
+<div class="formulario-container">
+  <div class="formulario-header">
+    <h2 mat-dialog-title>{{ data.titulo }}</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="formulario-form">
+    <div mat-dialog-content class="formulario-content">
+      
+      <mat-form-field 
+        *ngFor="let campo of data.campos" 
+        appearance="outline" 
+        class="campo-formulario">
+        
+        <mat-label>{{ campo.label }}</mat-label>
+        
+        <input 
+          matInput 
+          [type]="campo.type === 'number' ? 'number' : 'text'"
+          [formControlName]="campo.key"
+          [placeholder]="campo.placeholder || ''"
+          [required]="!!campo.required">
+        
+        <mat-error *ngIf="formulario.get(campo.key)?.invalid && formulario.get(campo.key)?.touched">
+          {{ getErrorMessage(campo) }}
+        </mat-error>
+        
+      </mat-form-field>
+
+    </div>
+
+    <div mat-dialog-actions class="formulario-actions">
+      <button 
+        type="button" 
+        mat-button 
+        (click)="onCancel()" 
+        class="btn-cancelar">
+        Cancelar
+      </button>
+      
+      <button 
+        type="submit" 
+        mat-raised-button 
+        color="primary" 
+        [disabled]="formulario.invalid"
+        class="btn-guardar">
+        {{ data.accion === 'crear' ? 'Crear' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</div>
