@@ -1,11 +1,20 @@
-version: '3.9'
-
 services:
+  frontend:
+    build:
+      context: frontend-microescolar/frontend-microescolar
+      dockerfile: Dockerfile
+    container_name: gestionmicroescolar-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
   api:
     build:
       context: .
       dockerfile: GestionMicroEscolar/Dockerfile
-    container_name: gestionmicroescolar
+    container_name: gestionmicroescolar-api
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
     ports:
@@ -13,10 +22,11 @@ services:
       - "8081:8081"
     depends_on:
       - db
+    restart: unless-stopped
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: micros_db
+    container_name: gestionmicroescolar-db
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=YourPassword123!

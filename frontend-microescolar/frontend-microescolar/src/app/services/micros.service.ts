@@ -3,10 +3,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Micro, MicroRequest } from '../models/micro.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MicrosService {
-  private readonly baseUrl = '/api/Micro';
+  private readonly baseUrl = `${environment.apiUrl}/Micro`;
 
   constructor(private http: HttpClient) {}
 

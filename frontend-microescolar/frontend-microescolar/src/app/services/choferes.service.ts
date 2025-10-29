@@ -3,10 +3,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Chofer, ChoferRequest } from '../models/chofer.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChoferesService {
-  private readonly baseUrl = '/api/Chofer';
+  private readonly baseUrl = `${environment.apiUrl}/Chofer`;
 
   constructor(private http: HttpClient) {}
 
