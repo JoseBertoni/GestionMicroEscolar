@@ -11,6 +11,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurar los archivos de configuración según el entorno
+if (builder.Environment.EnvironmentName == "Docker")
+{
+    builder.Configuration.AddJsonFile("appsettings.Docker.json", optional: false, reloadOnChange: true);
+}
+
 // Controllers
 builder.Services.AddControllers();
 
@@ -19,7 +25,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        var allowedOrigins = new List<string> { "http://localhost:4200" };
+        
+        // Agregar orígenes específicos para Docker
+        if (builder.Environment.EnvironmentName == "Docker")
+        {
+            allowedOrigins.AddRange(new[] { 
+                "http://frontend:80", 
+                "http://localhost:4200" 
+            });
+        }
+        
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -100,6 +117,50 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+// Aplicar migraciones automáticamente en Docker
+if (app.Environment.EnvironmentName == "Docker")
+{
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    
+    // Reintentar conexión hasta 60 segundos
+    var maxRetries = 60;
+    var retryCount = 0;
+    
+    while (retryCount < maxRetries)
+    {
+        try
+        {
+            logger.LogInformation("Intentando conectar a la base de datos... Intento {retryCount}/{maxRetries}", retryCount + 1, maxRetries);
+            
+            // Verificar si la base de datos puede ser alcanzada
+            await context.Database.CanConnectAsync();
+            
+            // Aplicar migraciones pendientes
+            logger.LogInformation("Aplicando migraciones de base de datos...");
+            await context.Database.MigrateAsync();
+            
+            logger.LogInformation("Migraciones aplicadas exitosamente.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            retryCount++;
+            logger.LogWarning("Error al conectar con la base de datos. Reintentando en 1 segundo... ({retryCount}/{maxRetries}). Error: {error}", retryCount, maxRetries, ex.Message);
+            
+            if (retryCount >= maxRetries)
+            {
+                logger.LogError(ex, "No se pudo conectar a la base de datos después de {maxRetries} intentos.", maxRetries);
+                // No lanzar excepción, permitir que la app inicie sin DB
+                break;
+            }
+            
+            await Task.Delay(1000); // Esperar 1 segundo antes del siguiente intento
+        }
+    }
+}
 
 // Middleware de manejo de errores (temporalmente comentado)
 // app.UseMiddleware<ErrorHandlingMiddleware>();

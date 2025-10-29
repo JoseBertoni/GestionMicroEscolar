@@ -3,12 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Chico, ChicoRequest } from '../models/chico.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChicosService {
-  private readonly baseUrl = '/api/Chico';
+  private readonly baseUrl = `${environment.apiUrl}/Chico`;
 
   constructor(private http: HttpClient) {}
 

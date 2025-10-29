@@ -1,0 +1,22 @@
+# .dockerignore para el frontend
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log*
+.nyc_output
+coverage/
+.coverage/
+.cache/
+dist/
+.angular/
+.sass-cache/
+connect.lock
+typings/
+.vscode/
+*.log
+*.tmp
+*.temp
+.DS_Store
